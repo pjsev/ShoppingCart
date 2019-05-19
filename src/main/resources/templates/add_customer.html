@@ -1,0 +1,23 @@
+<html>
+	<head> 
+		<title> goFluent Coding Exercise </title>
+	</head>
+	
+	<body>
+		<h1> New Registration </h1>
+		
+		<form action="#" th:action="@{/save}" th:object="${customer}" method="post">
+    		<label for="name">First Name</label>
+    		<input type="text" th:field="*{firstName}" id="firstName" placeholder="First Name">
+    		<br /><br />
+    		<label for="name">Last Name</label>
+    		<input type="text" th:field="*{lastName}" id="lastName" placeholder="Last Name">
+    		<br /><br />
+    		<label for="email">Email</label>
+    		<input type="text" th:field="*{email}" id="email" placeholder="Email">
+  			<br /><br />
+    		<input type="submit" value="Add Customer">   
+		</form>
+	</body>
+</html>
+
