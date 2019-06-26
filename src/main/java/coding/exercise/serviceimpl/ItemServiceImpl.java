@@ -31,4 +31,9 @@ public class ItemServiceImpl implements ItemService {
 		return itemRepository.findAll();
 	}
 
+	@Override
+	public Item saveInventoryItem(Item item) {
+		return itemRepository.save(item);
+	}
+
 }

@@ -10,4 +10,6 @@ public interface ItemService {
 	
 	Set<Item> getItems(Customer c);
 	List<Item> listAllItems();
+	
+	Item saveInventoryItem(Item item);
 }

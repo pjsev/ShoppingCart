@@ -11,23 +11,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import coding.exercise.model.Item;
 import coding.exercise.model.ItemRepository;
+import coding.exercise.service.ItemService;
 
 @RestController
 @RequestMapping("/products")
 public class ItemController {
 
 	@Autowired
-	ItemRepository itemRepository;
+	ItemService itemService;
 	
 	// REST API - add Item
 	@PostMapping("/add")
 	public Item createItem(@RequestBody Item item) {
-		return itemRepository.save(item);
+		return itemService.saveInventoryItem(item);
 	}
 	
 	// REST API - list all items
 	@GetMapping("/list")
 	public List<Item> getAllItems() {
-		return itemRepository.findAll();
+		return itemService.listAllItems();
 	}
 }
