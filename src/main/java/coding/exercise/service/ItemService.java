@@ -12,4 +12,5 @@ public interface ItemService {
 	List<Item> listAllItems();
 	
 	Item saveInventoryItem(Item item);
+	Item getItem(long itemId);
 }

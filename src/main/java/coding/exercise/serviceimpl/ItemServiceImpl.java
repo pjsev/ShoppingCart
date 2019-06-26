@@ -36,4 +36,9 @@ public class ItemServiceImpl implements ItemService {
 		return itemRepository.save(item);
 	}
 
+	@Override
+	public Item getItem(long itemId) {		
+		return itemRepository.getOne(itemId);
+	}
+
 }

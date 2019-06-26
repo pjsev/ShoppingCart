@@ -17,30 +17,31 @@ import coding.exercise.model.Customer;
 import coding.exercise.model.CustomerRepository;
 import coding.exercise.model.Item;
 import coding.exercise.model.ItemRepository;
+import coding.exercise.service.ItemService;
 
 @Controller
 public class ShoppingController {
 	
 	@Autowired
-	ItemRepository itemRepository;
+	ItemService itemService;
 	
 	@Autowired
 	CustomerRepository customerRepository;
 	
 	@PostMapping("/items")
 	public Item addItem(@Valid @RequestBody Item item) {
-		return itemRepository.save(item);
+		return itemService.saveInventoryItem(item);
 	}
 	
 	@GetMapping("/items")
 	public List<Item> getItems() {
-		return itemRepository.findAll();
+		return itemService.listAllItems();
 	}
 	
 	@PostMapping("/addToCart/{customerId}/{itemId}")
 	public Item addToCart(@PathVariable long customerId, @PathVariable long itemId) {
-		Customer c = customerRepository.getOne(customerId);
-		Item i = itemRepository.getOne(itemId);
+		Customer c = customerRepository.getOne(customerId);		
+		Item i = itemService.getItem(itemId);
 		Set<Customer> customerItems = i.getCustomers();
 		
 		if (!customerItems.contains(c)) {
@@ -48,13 +49,13 @@ public class ShoppingController {
 			i.setCustomer(customerItems);
 		}
 		
-		return itemRepository.save(i);
+		return itemService.saveInventoryItem(i);
 	}
 	
 	@RequestMapping(value="/addToBasket/{customerId}/{itemId}", method=RequestMethod.GET)
 	public String addToBasket(@PathVariable long customerId, @PathVariable long itemId) {
-		Customer c = customerRepository.getOne(customerId);
-		Item i = itemRepository.getOne(itemId);
+		Customer c = customerRepository.getOne(customerId);		
+		Item i = itemService.getItem(itemId);
 		Set<Customer> customerItems = i.getCustomers();
 		
 		if (!customerItems.contains(c)) {
@@ -62,14 +63,14 @@ public class ShoppingController {
 			i.setCustomer(customerItems);
 		}
 		
-		itemRepository.save(i);
+		itemService.saveInventoryItem(i);
 		return "redirect:/viewproducts/" + c.getCustomerId();
 	}
 	
 	@PostMapping("/removeFromCart/{customerId}/{itemId}") 
 	public Item removeFromCart(@PathVariable long customerId, @PathVariable long itemId) {
-		Customer c = customerRepository.getOne(customerId);
-		Item i = itemRepository.getOne(itemId);
+		Customer c = customerRepository.getOne(customerId);		
+		Item i = itemService.getItem(itemId);
 		Set<Customer> customerItems = i.getCustomers();
 		
 		if (customerItems.contains(c)) {
@@ -77,13 +78,13 @@ public class ShoppingController {
 			i.setCustomer(customerItems);
 		}
 		
-		return itemRepository.save(i);
+		return itemService.saveInventoryItem(i);
 	}
 	
 	@RequestMapping(value="/removeFromBasket/{customerId}/{itemId}", method=RequestMethod.GET)
 	public String removeFromBasket(@PathVariable long customerId, @PathVariable long itemId) {
 		Customer c = customerRepository.getOne(customerId);
-		Item i = itemRepository.getOne(itemId);
+		Item i = itemService.getItem(itemId);
 		Set<Customer> customerItems = i.getCustomers();
 		
 		if (customerItems.contains(c)) {
@@ -91,7 +92,7 @@ public class ShoppingController {
 			i.setCustomer(customerItems);
 		}
 		
-		itemRepository.save(i);
+		itemService.saveInventoryItem(i);
 		return "redirect:/viewproducts/" + c.getCustomerId();
 	}
 
