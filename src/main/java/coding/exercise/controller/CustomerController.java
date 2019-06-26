@@ -24,12 +24,13 @@ import coding.exercise.model.Customer;
 import coding.exercise.model.CustomerRepository;
 import coding.exercise.model.Item;
 import coding.exercise.model.ItemRepository;
+import coding.exercise.service.CustomerService;
 
 @Controller
-public class CustomerController {
+public class CustomerController {		
 	
 	@Autowired
-	CustomerRepository customerRepository;
+	CustomerService customerService;
 	
 	@Autowired
 	ItemRepository itemRepository;
@@ -44,8 +45,9 @@ public class CustomerController {
 	
 	// REST API: POST - add customer
 	@PostMapping("/add")
-	public Customer createCustomer(@RequestBody Customer customer) {
-		return customerRepository.save(customer);
+	public Customer createCustomer(@RequestBody Customer customer) {		
+		return customerService.saveCustomer(customer);
+		//return customerRepository.save(customer);
 	}
 	
 	// WEB Save customer during registration
@@ -56,14 +58,17 @@ public class CustomerController {
 			return "index";
 		}
 		
-		Customer c = customerRepository.save(customer);
+		//Customer c = customerRepository.save(customer);
+		Customer c = customerService.saveCustomer(customer);
 		return "redirect:/viewproducts/" + c.getCustomerId();
 	}
 	
 	// WEB List all available items and customer's basket in one page
 	@RequestMapping(value="/viewproducts/{customerId}")
 	public ModelAndView getAllProducts(@PathVariable long customerId) {
-		Customer c = customerRepository.findById(customerId).orElse(null);
+		
+		//Customer c = customerRepository.findById(customerId).orElse(null);
+		Customer c = customerService.findCustomer(customerId);
 		ModelAndView modelAndView = new ModelAndView("viewproducts");
 		
 		List<Item> list = itemRepository.findAll();
@@ -76,14 +81,16 @@ public class CustomerController {
 	// WEB 
 	@RequestMapping(value="/viewcustomers")
 	public ModelAndView getAll() {
-		List<Customer> list = customerRepository.findAll();
+		//List<Customer> list = customerRepository.findAll();
+		List<Customer> list = customerService.findAllCustomers();
 		return new ModelAndView("viewcustomers", "list", list);
 	}
 	
 	// REST API: GET - list of items in customer's basket
 	@GetMapping("/items/{customerId}")
 	public Set<Item> getItems(@PathVariable long customerId) {
-		Customer c = customerRepository.findById(customerId).orElse(null);
+		//Customer c = customerRepository.findById(customerId).orElse(null);
+		Customer c = customerService.findCustomer(customerId);
 		return c.getItems();
 	}
 	
@@ -124,7 +131,7 @@ public class CustomerController {
 	// REST API: GET all items
 	@GetMapping("/list")
 	public List<Customer> getAllItems() {
-		return customerRepository.findAll();
+		return customerService.findAllCustomers();
 	}
 	
 }
