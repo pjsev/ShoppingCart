@@ -25,6 +25,7 @@ import coding.exercise.model.CustomerRepository;
 import coding.exercise.model.Item;
 import coding.exercise.model.ItemRepository;
 import coding.exercise.service.CustomerService;
+import coding.exercise.service.ItemService;
 
 @Controller
 public class CustomerController {		
@@ -33,7 +34,7 @@ public class CustomerController {
 	CustomerService customerService;
 	
 	@Autowired
-	ItemRepository itemRepository;
+	ItemService itemService;	
 	
 	// index page upon loading the application
 	@RequestMapping(value="/", method=RequestMethod.GET)
@@ -68,7 +69,7 @@ public class CustomerController {
 		Customer c = customerService.findCustomer(customerId);
 		ModelAndView modelAndView = new ModelAndView("viewproducts");
 		
-		List<Item> list = itemRepository.findAll();
+		List<Item> list = itemService.listAllItems();
 		modelAndView.addObject("customerId", customerId);
 		modelAndView.addObject("list", list);
 		modelAndView.addObject("myList", c.getItems());
@@ -86,37 +87,27 @@ public class CustomerController {
 	@GetMapping("/items/{customerId}")
 	public Set<Item> getItems(@PathVariable long customerId) {		
 		Customer c = customerService.findCustomer(customerId);
-		return c.getItems();
+		return itemService.getItems(c);
 	}
 	
 	@GetMapping("/items/{customerId}/total") 
 	public double getTotal(@PathVariable long customerId) {
-		Set<Item> items = getItems(customerId);
+		Set<Item> items = getItems(customerId);		
+		double total = customerService.computeCustomerItems(items);
 		
-		// logic should be placed inside service implementation
-		double total = 0;
-		for (Item i: items) {
-			total += i.getPrice();
-		}
-		
-		BigDecimal bd = new BigDecimal(total).setScale(2);
-   
-		return bd.doubleValue();
+		NumberFormat formatter = new DecimalFormat("#0.00");		
+		return Double.parseDouble(formatter.format(total));
 	}
 	
 	// WEB to display items for checkout
 	@RequestMapping(value="/mybasket/{customerId}")
 	public ModelAndView checkout(@PathVariable long customerId) {
 		ModelAndView modelAndView = new ModelAndView("mybasket");
-		Set<Item> items = getItems(customerId);
+		Set<Item> items = getItems(customerId);		
 		
-		// logic should be placed inside service implementation
-		double total = 0;
-		for (Item i: items) {
-			total += i.getPrice();
-		}
+		double total = customerService.computeCustomerItems(items);
 		
-		NumberFormat formatter = new DecimalFormat("#0.00");     
+		NumberFormat formatter = new DecimalFormat("#0.00");
 		
 		modelAndView.addObject("items", items);		
 		modelAndView.addObject("total", formatter.format(total));
