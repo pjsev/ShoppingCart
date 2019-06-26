@@ -1,6 +1,8 @@
 package coding.exercise.controller;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -112,9 +114,10 @@ public class CustomerController {
 			total += i.getPrice();
 		}
 		
-		BigDecimal bd = new BigDecimal(total).setScale(2);
-		modelAndView.addObject("items", items);
-		modelAndView.addObject("total", bd);
+		NumberFormat formatter = new DecimalFormat("#0.00");     
+		
+		modelAndView.addObject("items", items);		
+		modelAndView.addObject("total", formatter.format(total));
 		return modelAndView;
 	}
 	
